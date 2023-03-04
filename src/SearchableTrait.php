@@ -311,6 +311,9 @@ trait SearchableTrait
         {
             $cases[] = $this->getCaseCompare($column, $like_comparator, $relevance * $relevance_multiplier);
             $this->search_bindings[] = $pre_word . $word . $post_word;
+            
+            $cases[] = $this->getCaseFullTextCompare($column, $relevance * $relevance_multiplier);
+            $this->search_bindings[] = $pre_word . $word . $post_word;
         }
 
         return implode(' + ', $cases);
@@ -343,6 +346,21 @@ trait SearchableTrait
         $column = str_replace('.', '`.`', $column);
         $field = "LOWER(`" . $column . "`) " . $compare . " ?";
         return '(case when ' . $field . ' then ' . $relevance . ' else 0 end)';
+    }
+    
+     /**
+     * Returns the comparison string.
+     *
+     * @param string $column
+     * @param float $relevance
+     * @return string
+     */
+    protected function getCaseFullTextCompare($column, $relevance)
+    {
+
+        $column = str_replace('.', '`.`', $column);
+        $field = "MATCH(`" . $column . "`) AGAINST (?) / CHAR_LENGTH(`" . $column . "`)";
+        return '( ' . $field . ' )';
     }
 
     /**
