@@ -313,7 +313,7 @@ trait SearchableTrait
             $this->search_bindings[] = $pre_word . $word . $post_word;
             
             $cases[] = $this->getCaseFullTextCompare($column, $relevance * $relevance_multiplier);
-            $this->search_bindings[] = $pre_word . $word . $post_word;
+            $this->search_bindings[] =  $word ;
         }
 
         return implode(' + ', $cases);
@@ -360,8 +360,8 @@ trait SearchableTrait
 
         $column = str_replace('.', '`.`', $column);
 
-        $field = "(MATCH(`" . $column . "`) AGAINST (?  WITH QUERY EXPANSION)) / CHAR_LENGTH(`" . $column . "`)";
-        return '( ' . $field . ' )';
+        $field = "(MATCH(`" . $column . "`) AGAINST (?  IN NATURAL LANGUAGE MODE)) / CHAR_LENGTH(`" . $column . "`)";
+        return '( ' . $field . ' * ' . $relevance . ')';
     }
 
     /**
