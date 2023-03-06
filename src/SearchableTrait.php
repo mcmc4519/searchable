@@ -359,7 +359,8 @@ trait SearchableTrait
     {
 
         $column = str_replace('.', '`.`', $column);
-        $field = "MATCH(`" . $column . "`) AGAINST (?) / CHAR_LENGTH(`" . $column . "`)";
+
+        $field = "(MATCH(`" . $column . "`) AGAINST (?  WITH QUERY EXPANSION)) / CHAR_LENGTH(`" . $column . "`)";
         return '( ' . $field . ' )';
     }
 
